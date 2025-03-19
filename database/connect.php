@@ -17,19 +17,4 @@ class database {
     }
 }
 
-class vistas {
-    private $conn;
-    
-    public function __construct(){
-        $database = new database();
-        $this->conn = $database->conn;
-    }
-
-    public function get_personal(){
-        $sql = "SELECT * FROM Empleados";
-        $result = mysqli_query($this->conn, $sql);
-        return $result;
-    }
-}
-
 ?>
