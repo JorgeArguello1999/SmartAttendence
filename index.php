@@ -4,7 +4,7 @@
 require_once 'database/query.php';
 $r_asistencia = new Registro_Asistencia();
 
-echo "<h1>Asistencia</h1>";
+echo "<h1>Trabajadores</h1>";
 foreach($r_asistencia->get_all() as $row){
     foreach($row as $item){
         if($item == $row['imagen_rostro']){
