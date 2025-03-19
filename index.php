@@ -39,50 +39,63 @@ foreach ($asistencia->get_all() as $row) {
 }
 echo "</table>";
 
-// Ejemplo de uso:
-// Crear una instancia de la clase RegistroAsistencia
-$registroAsistencia = new RegistroAsistencia();
+require_once 'database/query.php';
 
-// Cargar la imagen según el tipo de dato en la BD
-$imagen_verificacion = file_get_contents('photo_test.png'); // Si la columna es BLOB
+if ($_SERVER["REQUEST_METHOD"] == "POST") {
+    // Crear una instancia de la clase RegistroAsistencia
+    $registroAsistencia = new RegistroAsistencia();
 
-// Datos de asistencia
-$id_empleado = 1;
-$tipo_registro = 'Entrada';
-$fecha_hora = date('Y-m-d H:i:s'); // Fecha y hora actual
-$confianza_reconocimiento = 0.95;
-$latitud = 40.7127837;
-$longitud = -74.0059413;
-$id_sede = 1;
-$dentro_perimetro = 1;
-$ip_dispositivo = '192.168.1.10';
-$dispositivo_info = 'Bulcan SE';
-$estatus = 'Válido';
-$observaciones = 'Ninguna';
+    // Obtener los datos del formulario POST
+    $id_empleado = $_POST['id_empleado'] ?? null;
+    $tipo_registro = $_POST['tipo_registro'] ?? null;
+    $fecha_hora = $_POST['fecha_hora'] ?? date('Y-m-d H:i:s'); // Si no se envía, usa la fecha actual
+    $confianza_reconocimiento = isset($_POST['confianza_reconocimiento']) ? floatval($_POST['confianza_reconocimiento']) : null;
+    $latitud = isset($_POST['latitud']) ? floatval($_POST['latitud']) : null;
+    $longitud = isset($_POST['longitud']) ? floatval($_POST['longitud']) : null;
+    $id_sede = $_POST['id_sede'] ?? null;
+    $dentro_perimetro = $_POST['dentro_perimetro'] ?? null;
+    $ip_dispositivo = $_POST['ip_dispositivo'] ?? null;
+    $dispositivo_info = $_POST['dispositivo_info'] ?? null;
+    $estatus = $_POST['estatus'] ?? null;
+    $observaciones = $_POST['observaciones'] ?? null;
 
-// Insertar el registro de asistencia
-$exito = $registroAsistencia->insert_record(
-    $id_empleado,
-    $tipo_registro,
-    $fecha_hora,
-    $imagen_verificacion, // Pasar binario si es BLOB
-    $confianza_reconocimiento,
-    $latitud,
-    $longitud,
-    $id_sede,
-    $dentro_perimetro,
-    $ip_dispositivo,
-    $dispositivo_info,
-    $estatus,
-    $observaciones
-);
+    // Manejo de la imagen (si se envía)
+    if (isset($_FILES['imagen_verificacion']) && $_FILES['imagen_verificacion']['error'] == 0) {
+        $imagen_verificacion = file_get_contents($_FILES['imagen_verificacion']['tmp_name']);
+    } else {
+        $imagen_verificacion = null; // No se envió imagen
+    }
 
-// Verificar si la inserción fue exitosa
-if ($exito) {
-    echo "Registro de asistencia guardado correctamente.";
+    // Insertar el registro de asistencia
+    $exito = $registroAsistencia->insert_record(
+        $id_empleado,
+        $tipo_registro,
+        $fecha_hora,
+        $imagen_verificacion,
+        $confianza_reconocimiento,
+        $latitud,
+        $longitud,
+        $id_sede,
+        $dentro_perimetro,
+        $ip_dispositivo,
+        $dispositivo_info,
+        $estatus,
+        $observaciones
+    );
+
+    // Responder con JSON
+    header('Content-Type: application/json');
+    echo json_encode([
+        'success' => $exito,
+        'message' => $exito ? "Registro de asistencia guardado correctamente." : "Error al guardar el registro de asistencia."
+    ]);
 } else {
-    echo "Error al guardar el registro de asistencia.";
+    // Si no es una solicitud POST, mostrar error
+    http_response_code(405);
+    echo json_encode([
+        'success' => false,
+        'message' => "Método no permitido. Usa POST."
+    ]);
 }
-
 
 ?>
