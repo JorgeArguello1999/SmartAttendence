@@ -39,6 +39,7 @@ foreach ($asistencia->get_all() as $row) {
 }
 echo "</table>";
 
+/*
 require_once 'database/query.php';
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
@@ -97,5 +98,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         'message' => "Método no permitido. Usa POST."
     ]);
 }
+*/
 
 ?>
