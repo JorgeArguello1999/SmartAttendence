@@ -51,6 +51,9 @@ class DatosBiometricos(models.Model):
     fecha_registro = models.DateField(auto_now_add=True)
     fecha_actualizacion = models.DateField(auto_now=True)
 
+    def __str__(self):
+        return f"{self.id_empleado}"
+
 class Usuario(models.Model):
     id_usuario = models.AutoField(primary_key=True)
     nombre_usuario = models.CharField(max_length=50, unique=True)
@@ -69,6 +72,9 @@ class Usuario(models.Model):
         "CON": "Consulta"
     }
     rol = models.CharField(max_length=3, choices=ROLES)
+
+    def __str__(self):
+        return f"{self.nombre_usuario}"
 
 class Incidencias(models.Model):
     id_incidencia = models.AutoField(primary_key=True)
@@ -93,3 +99,6 @@ class Incidencias(models.Model):
     }
     estado = models.CharField(max_length=3, choices=ESTADOS)
     fecha_aprobacion = models.DateTimeField()
+
+    def __str__(self):
+        return f"{self.id_empleado} - {self.tipo_incidencia}"
