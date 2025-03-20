@@ -171,3 +171,33 @@ class EmpleadoHorario(models.Model):
 
     def __str__(self):
         return f'{self.id_sede}: {self.id_horario}'
+
+class RegistroAsistencia(models.Model):
+    id_registro = models.AutoField(primary_key=True)
+    id_empleado = models.ForeignKey(Empleado, on_delete=models.CASCADE)
+
+    TIPOS_REGISTROS = {
+        "ENT": "Entrada",
+        "SAL": "Salida"
+    }
+    tipo_registro = models.CharField(max_length=3, choices=TIPOS_REGISTROS)
+    fecha_hora = models.DateField()
+    imagen_verificacion = models.ImageField()
+    confianza_reconocimiento = models.FloatField()
+    latitud = models.CharField(max_length=100)
+    longitud = models.CharField(max_length=100)
+
+    id_sede = models.ForeignKey(Sede, on_delete=models.CASCADE)
+    permitido = models.BooleanField()
+    ip_dispositivo = models.CharField(max_length=20)
+    dispositivo_info = models.TextField()
+
+    ESTATUS_INFO = {
+        "VAL": "Valido",
+        "FUP": "Fuera de perimetro",
+        "RET": "Retrasado",
+        "MAN": "Manual",
+        "SOS": "Sospechoso"
+    }
+    estatus = models.CharField(max_length=3, choices=ESTATUS_INFO)
+    observaciones = models.TextField(blank=True, null=True)

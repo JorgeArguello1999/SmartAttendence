@@ -17,3 +17,5 @@ admin.site.register(models.Justificante)
 admin.site.register(models.Horario)
 admin.site.register(models.Sede)
 admin.site.register(models.EmpleadoHorario)
+
+admin.site.register(models.RegistroAsistencia)
