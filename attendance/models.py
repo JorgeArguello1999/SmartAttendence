@@ -126,3 +126,48 @@ class Justificante(models.Model):
 
     def __str__(self):
         return self.id_justificante, self.documento
+    
+class Horario(models.Model):
+    id_horario = models.AutoField(primary_key=True)
+    hora_entrada = models.TimeField()
+    hora_salida = models.TimeField()
+    tolerancia_entrada = models.IntegerField()
+    tolerancia_salida = models.IntegerField()
+
+
+    DIAS = {
+        "LUN": "Lunes",
+        "MAR": "Martes",
+        "MIR": "Miercoles",
+        "JUE": "Jueves",
+        "VIE": "Viernes",
+        "SAB": "Sabado",
+        "DOM": "Domingo"
+    }
+    dias_laborables = models.CharField(max_length=3, choices=DIAS)
+
+    activo = models.BooleanField(default=True)
+
+    def __str__(self):
+        return f'H:{self.hora_entrada}-{self.hora_salida}: {self.dias_laborables}'
+
+class Sede(models.Model):
+    id_sede = models.AutoField(primary_key=True)
+    nombre = models.CharField(max_length=255)
+    direccion = models.CharField(max_length=200)
+    latitud = models.CharField(max_length=255)
+    longitud = models.CharField(max_length=255)
+    radio_geo_permitido = models.IntegerField()
+    activo = models.BooleanField(default=True)
+
+    def __str__(self):
+        return f'{self.nombre}: {self.latitud} {self.longitud}'
+
+class EmpleadoHorario(models.Model):
+    id_empleado_horario = models.AutoField(primary_key=True)
+    id_empleado = models.ForeignKey(Empleado, on_delete=models.CASCADE)
+    id_horario = models.ManyToManyField('Horario', related_name='Empleado')
+    id_sede = models.ForeignKey(Sede, on_delete=models.CASCADE)
+
+    def __str__(self):
+        return f'{self.id_sede}: {self.id_horario}'

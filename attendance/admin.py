@@ -13,3 +13,7 @@ admin.site.register(models.DatosBiometricos)
 
 admin.site.register(models.Auditoria)
 admin.site.register(models.Justificante)
+
+admin.site.register(models.Horario)
+admin.site.register(models.Sede)
+admin.site.register(models.EmpleadoHorario)
