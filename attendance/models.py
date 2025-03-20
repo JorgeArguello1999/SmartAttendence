@@ -102,3 +102,27 @@ class Incidencias(models.Model):
 
     def __str__(self):
         return f"{self.id_empleado} - {self.tipo_incidencia}"
+
+class Auditoria(models.Model):
+    id_log = models.AutoField(primary_key=True)
+    id_usuario = models.ForeignKey(Usuario, on_delete=models.CASCADE)
+    accion = models.CharField(max_length=50)
+    tabla_afectada = models.CharField(max_length=255)
+    id_registro_afectado = models.IntegerField()
+    datos_antiguos = models.TextField()
+    datos_nuevos = models.TextField()
+    fecha_hora = models.DateField()
+    ip_usuario = models.CharField(max_length=100)
+
+    def __str__(self):
+        return f"{self.id_usuario} - {self.id_log} - {self.accion}"
+    
+class Justificante(models.Model):
+    id_justificante = models.AutoField(primary_key=True)
+    id_incidencia = models.ForeignKey(Incidencias, on_delete=models.CASCADE)
+    documento = models.FileField()
+    tipo_documento = models.CharField(max_length=50)
+    fecha_carga = models.DateField()
+
+    def __str__(self):
+        return self.id_justificante, self.documento
