@@ -46,7 +46,7 @@ class Empleado(models.Model):
 class DatosBiometricos(models.Model):
     id_datos_biometricos = models.AutoField(primary_key=True)
     id_empleado = models.ForeignKey(Empleado, on_delete=models.CASCADE)
-    imagen_rostro = models.ImageField()
+    imagen_rostro = models.ImageField(upload_to='biometric_pics/')
     caracteristicas_facilales = models.TextField()
     fecha_registro = models.DateField(auto_now_add=True)
     fecha_actualizacion = models.DateField(auto_now=True)
@@ -182,7 +182,7 @@ class RegistroAsistencia(models.Model):
     }
     tipo_registro = models.CharField(max_length=3, choices=TIPOS_REGISTROS)
     fecha_hora = models.DateField()
-    imagen_verificacion = models.ImageField()
+    imagen_verificacion = models.ImageField(upload_to='profile_pics/')
     confianza_reconocimiento = models.FloatField()
     latitud = models.CharField(max_length=100)
     longitud = models.CharField(max_length=100)

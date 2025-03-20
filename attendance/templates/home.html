@@ -22,6 +22,7 @@
         <td>{{ r.dispositivo_info }}</td>
         <td>{{ r.estatus }}</td>
         <td>
+            {{ r.image_verificacion.url }}
             {% if r.imagen_verificacion %}
                 <img src="{{ r.imagen_verificacion.url }}" width="50">
             {% else %}
