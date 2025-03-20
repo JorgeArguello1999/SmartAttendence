@@ -42,3 +42,54 @@ class Empleado(models.Model):
 
     def __str__(self):
         return f"{self.cedula} - {self.nombres} {self.apellidos}"
+
+class DatosBiometricos(models.Model):
+    id_datos_biometricos = models.AutoField(primary_key=True)
+    id_empleado = models.ForeignKey(Empleado, on_delete=models.CASCADE)
+    imagen_rostro = models.ImageField()
+    caracteristicas_facilales = models.TextField()
+    fecha_registro = models.DateField(auto_now_add=True)
+    fecha_actualizacion = models.DateField(auto_now=True)
+
+class Usuario(models.Model):
+    id_usuario = models.AutoField(primary_key=True)
+    nombre_usuario = models.CharField(max_length=50, unique=True)
+    password = models.CharField(max_length=255)
+    
+    id_empleado = models.ForeignKey(Empleado, on_delete=models.CASCADE)
+
+    ultimo_acceso = models.DateField(auto_now=True)
+    activo = models.BooleanField(default=True)
+
+    # Roles
+    ROLES = {
+        "ADM": "Admin",
+        "SUP": "Supervisor",
+        "RRH": "Recursos Humanos",
+        "CON": "Consulta"
+    }
+    rol = models.CharField(max_length=3, choices=ROLES)
+
+class Incidencias(models.Model):
+    id_incidencia = models.AutoField(primary_key=True)
+    id_empleado = models.ForeignKey(Empleado, on_delete=models.CASCADE)
+
+    INCIDENCIAS = {
+        "RET": "Retardo",
+        "FAL": "Falta",
+        "SAA": "Salida anticipada",
+        "TIE": "Tiempo extra",
+        "JUS": "Justificación"
+    }
+    tipo_incidencia = models.CharField(max_length=3, choices=INCIDENCIAS)
+    fecha = models.DateField
+    minutos = models.IntegerField()
+    justificacion = models.TextField()
+
+    ESTADOS = {
+        "PEN": "Pendiente",
+        "APR": "Aprobado",
+        "REC": "Rechazado"
+    }
+    estado = models.CharField(max_length=3, choices=ESTADOS)
+    fecha_aprobacion = models.DateTimeField()
