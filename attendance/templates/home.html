@@ -1,1 +1,36 @@
-hi
+<table border="1">
+    <tr>
+        <th>ID Empleado</th>
+        <th>Nombre</th>
+        <th>Correo</th>
+        <th>Teléfono</th>
+        <th>Fecha y Hora</th>
+        <th>Dispositivo</th>
+        <th>Estatus</th>
+        <th>Imagen</th>
+        <th>Sede</th>
+        <th>Latitud</th>
+        <th>Longitud</th>
+    </tr>
+    {% for r in registros %}
+    <tr>
+        <td>{{ r.id_empleado__id }}</td>
+        <td>{{ r.id_empleado__nombres }} {{ r.id_empleado__apellidos }}</td>
+        <td>{{ r.id_empleado__email }}</td>
+        <td>{{ r.id_empleado__telefono }}</td>
+        <td>{{ r.fecha_hora }}</td>
+        <td>{{ r.dispositivo_info }}</td>
+        <td>{{ r.estatus }}</td>
+        <td>
+            {% if r.imagen_verificacion %}
+                <img src="{{ r.imagen_verificacion.url }}" width="50">
+            {% else %}
+                Sin imagen
+            {% endif %}
+        </td>
+        <td>{{ r.id_sede__nombre }}</td>
+        <td>{{ r.latitud }}</td>
+        <td>{{ r.longitud}}</td>
+    </tr>
+    {% endfor %}
+</table>
