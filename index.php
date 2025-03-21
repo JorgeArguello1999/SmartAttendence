@@ -38,16 +38,42 @@ echo $response;
  </form>
 
 <?php
-// Views
-echo "<h1>Sistema de Gestión</h1>";
-require_once "views/empleados.php";
-
-require_once "database/query.php";
-$empleado = new Empleados();
-echo renderizarTablaEmpleados($empleado);
-
-require_once "views/asistencia.php";
-$asistencia = new RegistroAsistencia();
-echo mostrar_asistencia($asistencia);
 
 ?>
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SmartAttendance</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="min-h-screen bg-blue-50 text-blue-900">
+    <!-- Navbar -->
+    <nav class="bg-blue-700 text-white p-4 shadow-lg">
+        <div class="container mx-auto flex justify-between items-center">
+            <h1 class="text-2xl font-bold">SmartAttendance</h1>
+            <ul class="flex space-x-6">
+                <li><a href="views/empleados.php" class="hover:underline">Empleados</a></li>
+                <li><a href="#about" class="hover:underline">Sobre Nosotros</a></li>
+                <li><a href="#contact" class="hover:underline">Contacto</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <header class="container mx-auto text-center py-20">
+        <h2 class="text-4xl font-bold text-blue-800">Automatiza la asistencia de tu equipo</h2>
+        <p class="mt-4 text-lg">Una solución eficiente y segura para gestionar la asistencia en tu organización.</p>
+        <button class="mt-6 bg-blue-700 hover:bg-blue-800 text-white py-2 px-6 rounded-lg shadow-lg text-lg">
+            Empezar Ahora
+        </button>
+    </header>
+
+    <!-- Footer -->
+    <footer class="bg-blue-700 text-white text-center p-4 mt-16">
+        <p>&copy; 2025 SmartAttendance. Todos los derechos reservados.</p>
+    </footer>
+</body>
+</html>
+
