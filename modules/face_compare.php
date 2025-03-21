@@ -65,6 +65,38 @@ class Rostros{
         return $response; // 
     }
 
+    public function comparacion_binaria($data, $file){
+        $url = $this->URL.'binary_compare/';
+        $ch = curl_init();
+
+        // Configuración de los datos
+        $file = new CURLFile($file['tmp_name'], $file['type'], $file['name']);
+        $data = [
+            'file' => $file,
+            'binary' => $data
+        ];
+
+        // Configuración de la solicitud cURL
+        curl_setopt($ch, CURLOPT_URL, $url);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($ch, CURLOPT_POST, true);
+        curl_setopt($ch, CURLOPT_POSTFIELDS, $data);
+
+        // Ejecuta la solicitud
+        $response = curl_exec($ch);
+        
+        // Maneja errores en caso de fallo
+        if ($response === false) {
+            $error_message = curl_error($ch); // Obtiene el mensaje de error
+            curl_close($ch);
+            return 'Error: ' . $error_message;
+        }
+
+        // Cierra la conexión cURL
+        curl_close($ch);
+        return $response;  // Devuelve la respuesta de la API
+    }
+
 }
 
 ?>
