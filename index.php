@@ -55,7 +55,7 @@ echo $response;
             <h1 class="text-2xl font-bold">SmartAttendance</h1>
             <ul class="flex space-x-6">
                 <li><a href="views/empleados.php" class="hover:underline">Empleados</a></li>
-                <li><a href="#about" class="hover:underline">Sobre Nosotros</a></li>
+                <li><a href="views/asistencia.php" class="hover:underline">Asistencia</a></li>
                 <li><a href="#contact" class="hover:underline">Contacto</a></li>
             </ul>
         </div>
