@@ -125,11 +125,7 @@ class Rostros {
     // Método para generar respuestas consistentes en formato JSON
     private function response($status_code, $message) {
         // Definir cabeceras HTTP
-        http_response_code($status_code);
-        return json_encode([
-            'status_code' => $status_code,
-            'message' => $message
-        ]);
+        return json_encode($message);
     }
 }
 
