@@ -22,8 +22,9 @@ class Rostros{
         // Exec 
         $response = curl_exec($ch);
         if ($response === false) {
+            $error_message = curl_error($ch); // Obtiene el mensaje de error
             curl_close($ch);
-            return 'false';
+            return 'Error: ' . $error_message;
         }
 
         curl_close($ch);
@@ -38,7 +39,6 @@ class Rostros{
         $file1 = new CURLFile($file1['tmp_name'], $file1['type'], $file1['name']);
         $file2 = new CURLFile($file2['tmp_name'], $file2['type'], $file2['name']);
 
-        // Configura los datos para la solicitud
         $data = [
             'file1' => $file1,
             'file2' => $file2
@@ -62,7 +62,7 @@ class Rostros{
 
         // Cierra la conexión cURL
         curl_close($ch);
-        return $response; // Retorna la respuesta
+        return $response; // 
     }
 
 }
