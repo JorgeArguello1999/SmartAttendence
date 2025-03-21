@@ -1,22 +1,11 @@
 <?php
 require_once 'modules/face_compare.php';
-if($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_FILES['file'])){
-    $rostros = new Rostros();
-    $obtener_binario = $rostros->obtener_binario($_FILES['file']);
-    echo "Binario: ".$obtener_binario;
-}
+require_once 'api/handler.php';
+$rostros = new Rostros();
+$api = new ApiHandler($rostros);
+$response = $api->handleRequest();
+echo $response;
 
-if($_SERVER["REQUEST_METHOD"] == "POST" && isset($_FILES["file1"], $_FILES['file2'])){
-    $rostros = new Rostros();
-    $comparar_rostros = $rostros->comparar_rostros($_FILES['file1'], $_FILES['file2']);
-    echo "Resultado: ".$comparar_rostros;
-}
-
-if($_SERVER["REQUEST_METHOD"] == "POST" && isset($_FILES['file'], $_POST['binary'])){
-    $rostros = new Rostros();
-    $comparacion_binaria = $rostros->comparacion_binaria($_POST['binary'], $_FILES['file']);
-    echo "Resultado: ".$comparacion_binaria;
-}
 ?>
 <form action="http://127.0.0.1:82/" method="POST" enctype="multipart/form-data">
         <label for="file">Selecciona una foto:</label>
