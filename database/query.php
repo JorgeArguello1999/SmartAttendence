@@ -50,41 +50,10 @@ class RegistroAsistencia extends main{
         return $result;
     }
 
-    public function insert_record($id_empleado, $tipo_registro, $fecha_hora, $imagen_verificacion, $confianza_reconocimiento, $latitud, $longitud, $id_sede, $dentro_perimetro, $ip_dispositivo, $dispositivo_info, $estatus, $observaciones){
-        
-        $sql = "INSERT IGNORE INTO RegistrosAsistencia (
-            id_empleado, tipo_registro, fecha_hora, imagen_verificacion, confianza_reconocimiento, latitud, longitud, id_sede, dentro_perimetro, ip_dispositivo, dispositivo_info, estatus, observaciones
-        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
-
-        $stmt = $this->conn->prepare($sql);
-        if (!$stmt) {
-            echo "Error en la consulta: " . $this->conn->error;
-            return false;
-        }
-
-        $stmt->bind_param(
-            "isssbddisssss",
-            $id_empleado,
-            $tipo_registro,
-            $fecha_hora,
-            $imagen_verificacion,
-            $confianza_reconocimiento,
-            $latitud,
-            $longitud,
-            $id_sede,
-            $dentro_perimetro,
-            $ip_dispositivo,
-            $dispositivo_info,
-            $estatus,
-            $observaciones
-        );
-
-        $resultado = $stmt->execute();
-        $stmt->close();
-
-        return $resultado;
+    public function save_asistencia(){
+        $sql = "
+        ";
     }
-
 }
 
 ?>
