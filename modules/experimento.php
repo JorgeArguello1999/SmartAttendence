@@ -1,14 +1,4 @@
 <?php
-// My experiment
-/*
-$command = "
-curl --location 'http://127.0.0.1:8000/get_binary/' \
---form 'file=@\"/home/jorge/personal/CheckID/uploads/photo1.png\"'
-";
-$output = shell_exec($command);
-print_r($output);
-*/
-
 if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_FILES['file'])) {
     // Ruta de la API a la que enviar el archivo
     $url = 'http://127.0.0.1:8000/get_binary/';
