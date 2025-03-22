@@ -50,9 +50,40 @@ class RegistroAsistencia extends main{
         return $result;
     }
 
-    public function save_asistencia(){
-        $sql = "
+    public function save_asistencia($id_empleado, $tipo_registro, $fecha_hora, $image_verificacion, $confianza_reconocimiento, $latitud, $longitud, $id_sede, $perimetro, $ip_dispositivo, $ip_dispositivo_info, $estatus, $observaciones){
+        $sql = " INSERT INTO 'RegistroAsistencia' ('id_empleado', 'tipo_registro', 'fecha_hora',
+        'imagen_verificacion', 'confianza_reconocimiento', 'latitud', 'longitud', 'id_sede', 'dentro_perimetro',
+        'ip_dispositivo', 'dispositivo_info', 'estatus', 'observaciones') 
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
         ";
+
+        if($smt = $this->conn->prepare($sql)){
+            $smt->bind_param("isssbddiissss",
+            $id_empleado,
+            $tipo_registro,
+            $fecha_hora,
+            $image_verificacion,
+            $confianza_reconocimiento,
+            $latitud,
+            $longitud,
+            $id_sede,
+            $perimetro,
+            $ip_dispositivo,
+            $ip_dispositivo_info,
+            $estatus,
+            $observaciones
+        );
+
+        $result = false;
+        if($smt->execute()){
+            $result = true;
+        }
+        
+        $smt->close();
+        return $result;
+        }else{
+            return $this->conn->error;
+        }
     }
 }
 
