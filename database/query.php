@@ -88,4 +88,20 @@ class RegistroAsistencia extends main{
 
 }
 
+class DatosBiometricos extends main{
+    public function get_id_facial_details($cedula){
+        $sql = "SELECT Empleados.id_empleado, DatosBiometricos.caracteristicas_faciales FROM 
+        `DatosBiometricos` INNER JOIN Empleados on Empleados.id_empleado = DatosBiometricos.id_empleado 
+        where Empleados.cedula = '$cedula';";
+        $result = mysqli_query($this->conn, $sql);
+
+        if($result){
+            $result = mysqli_fetch_assoc($result);
+            return $result;
+        }
+        return False;
+
+    }
+}
+
 ?>

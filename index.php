@@ -1,4 +1,7 @@
 <?php
+require_once 'modules/UploadAppApi.php';
+use ImageUploader\APIUploader;
+
 header("Content-Type: application/json");
 
 // Verifica que la solicitud sea POST
@@ -58,6 +61,7 @@ if (!isset($_FILES['rostro'])) {
 
 $imagen = $_FILES['rostro'];
 $permitidos = ['image/jpeg', 'image/png', 'image/jpg'];
+
 if (!in_array($imagen['type'], $permitidos)) {
     echo json_encode(["error" => "Formato de imagen no permitido"]);
     exit;
@@ -76,14 +80,54 @@ if (!move_uploaded_file($imagen['tmp_name'], $ruta_destino)) {
     exit;
 }
 
-// Respuesta exitosa
-$response = [
-    "mensaje" => "Datos recibidos correctamente",
-    "cedula" => $cedula,
-    "gps" => $gps,
-    "ip" => $ip,
-    "imagen_guardada" => $ruta_destino,
-    "device_info" => $device_info
-];
+// GET desde la base de datos del rostro codificado
+require_once "database/query.php";
+$empleado = new DatosBiometricos();
+$detalles = $empleado->get_id_facial_details($cedula);
 
-echo json_encode($response);
+// Usar ImageUploader para enviar a la API de CheckID
+try {
+    // Preparar datos binarios si están disponibles (opcional)
+    $binaryData = $detalles['caracteristicas_faciales'] ?? '';
+
+    // Configurar URL de la API de CheckID (ajustar según tu configuración)
+    $apiUrl = 'http://127.0.0.1:8000/binary_compare/';
+
+    // Usar ImageUploader para subir imagen
+    $apiRespuesta = APIUploader::uploadToAPI(
+        $ruta_destino,  // Ruta de la imagen
+        $apiUrl,        // URL de la API
+        $binaryData,    // Datos binarios (opcional)
+        [
+            // Opciones adicionales de cURL si es necesario
+            CURLOPT_TIMEOUT => 60,
+            // Puedes agregar más configuraciones específicas
+        ]
+    );
+
+    // Verificar respuesta de la API
+    if (!$apiRespuesta['success']) {
+        throw new Exception("Error en la comparación facial: " . $apiRespuesta['error']);
+    }
+
+    // Respuesta exitosa
+    $response = [
+        "mensaje" => "Datos recibidos correctamente",
+        "cedula" => $cedula,
+        "gps" => $gps,
+        "ip" => $ip,
+        "imagen_guardada" => $ruta_destino,
+        "device_info" => $device_info,
+        "api_response" => $apiRespuesta['response'],
+    ];
+
+    echo json_encode($response);
+
+} catch (Exception $e) {
+    // Manejo de errores
+    http_response_code(500);
+    echo json_encode([
+        "error" => "Error en el procesamiento",
+        "detalle" => $e->getMessage()
+    ]);
+}
