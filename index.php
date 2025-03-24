@@ -35,8 +35,8 @@ curl_setopt_array($curl, [
         'Accept: application/json'
     ],
     CURLOPT_POSTFIELDS => [
-        'image' => "$id-$cedula.$extension",
-        'hex_file' => "$id-$cedula.hex"
+        'image' => new CURLFile("$id-$cedula.$extension"),
+        'hex_file' => new CURLFile("$id-$cedula.hex")
     ]
 ]);
 
