@@ -1,19 +1,29 @@
 <?php
+
+// Base de datos
+require_once 'database/query.php';
+$biometrico = new DatosBiometricos();
+$cedula = $_POST['cedula'] ?? '';
+$facial_detalles = $biometrico->get_id_facial_details($cedula);
+$id = $facial_detalles['id_empleado'];
+$detalles = $facial_detalles['caracteristicas_faciales'];
+file_put_contents("$id-$cedula.hex", $detalles);
+
+// Verifica si se recibió la imagen
+if (isset($_FILES['image']) && $_FILES['image']['error'] === UPLOAD_ERR_OK) {
+    $nombreArchivo = $_FILES['image']['name'];
+    $extension = pathinfo($nombreArchivo, PATHINFO_EXTENSION);
+    $rutaDestino = "$id-$cedula.$extension";
+
+    // Guarda el archivo correctamente
+    move_uploaded_file($_FILES['image']['tmp_name'], $rutaDestino);
+} else {
+    die("Error al subir la imagen.");
+}
+
+// Enviar a CheckID
+
 $uploadUrl = 'http://127.0.0.1:8000/compare_binary/';
-
-// Verifica que los archivos fueron subidos correctamente
-if (!isset($_FILES['image']) || !isset($_FILES['hex_file'])) {
-    die(json_encode(["error" => "No se recibieron ambos archivos correctamente"]));
-}
-
-// Obtener archivos temporales
-$imageTmpPath = $_FILES['image']['tmp_name'];
-$hexTmpPath = $_FILES['hex_file']['tmp_name'];
-
-// Verifica que los archivos existen en la carpeta temporal
-if (!file_exists($imageTmpPath) || !file_exists($hexTmpPath)) {
-    die(json_encode(["error" => "Uno o ambos archivos temporales no existen"]));
-}
 
 // Configuración de la solicitud cURL para reenviar los archivos
 $curl = curl_init();
@@ -25,8 +35,8 @@ curl_setopt_array($curl, [
         'Accept: application/json'
     ],
     CURLOPT_POSTFIELDS => [
-        'image' => new CURLFile($imageTmpPath, $_FILES['image']['type'], $_FILES['image']['name']),
-        'hex_file' => new CURLFile($hexTmpPath, $_FILES['hex_file']['type'], $_FILES['hex_file']['name'])
+        'image' => "$id-$cedula.$extension",
+        'hex_file' => "$id-$cedula.hex"
     ]
 ]);
 
@@ -44,3 +54,5 @@ if ($error) {
 } else {
     echo json_encode(["status_code" => $httpCode, "response" => json_decode($response, true)]);
 }
+
+?>
