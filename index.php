@@ -7,7 +7,9 @@ $cedula = $_POST['cedula'] ?? '';
 $facial_detalles = $biometrico->get_id_facial_details($cedula);
 $id = $facial_detalles['id_empleado'];
 $detalles = $facial_detalles['caracteristicas_faciales'];
-file_put_contents("$id-$cedula.hex", $detalles);
+
+$dir = "$id-$cedula";
+file_put_contents("$dir.hex", $detalles);
 
 // Verifica si se recibió la imagen
 if (isset($_FILES['image']) && $_FILES['image']['error'] === UPLOAD_ERR_OK) {
@@ -35,8 +37,8 @@ curl_setopt_array($curl, [
         'Accept: application/json'
     ],
     CURLOPT_POSTFIELDS => [
-        'image' => new CURLFile("$id-$cedula.$extension"),
-        'hex_file' => new CURLFile("$id-$cedula.hex")
+        'image' => new CURLFile("$dir.$extension"),
+        'hex_file' => new CURLFile("$dir.hex")
     ]
 ]);
 
@@ -54,5 +56,9 @@ if ($error) {
 } else {
     echo json_encode(["status_code" => $httpCode, "response" => json_decode($response, true)]);
 }
+
+// Delete files
+unlink("$dir.hex");
+unlink("$dir.$extension");
 
 ?>
