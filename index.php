@@ -1,79 +1,89 @@
 <?php
-/**
-require_once 'modules/face_compare.php';
-require_once 'api/handler.php';
-$rostros = new Rostros();
-$api = new ApiHandler($rostros);
-$response = $api->handleRequest();
-echo $response;
- */
-?>
-<!-- 
-<form action="http://127.0.0.1:82/" method="POST" enctype="multipart/form-data">
-        <label for="file">Selecciona una foto:</label>
-        <input type="file" id="file" name="file" accept="image/png" required>
-        <br><br>
-        <button type="submit">Subir</button>
-</form>
+header("Content-Type: application/json");
 
-<form action="http://127.0.0.1:82/" method="POST" enctype="multipart/form-data">
-    <label for="file1">Selecciona la primera imagen:</label>
-    <input type="file" name="file1" id="file1" required><br><br>
+// Verifica que la solicitud sea POST
+if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+    echo json_encode([
+        "error" => "Método no permitido",
+        "estructura" => [
+            "cedula" => "(string de 10 dígitos)",
+            "gps" => "(latitud,longitud con al menos 6 decimales)",
+            "ip" => "(dirección IP válida)",
+            "password" => "(cadena de texto)",
+            "device_info" => "(información del dispositivo)",
+            "rostro" => "(archivo de imagen jpeg/png/jpg)"
+        ]
+    ]);
+    exit;
+}
 
-    <label for="file2">Selecciona la segunda imagen:</label>
-    <input type="file" name="file2" id="file2" required><br><br>
+// Validar y obtener los datos del formulario
+$cedula = $_POST['cedula'] ?? '';
+$gps = $_POST['gps'] ?? '';
+$ip = $_POST['ip'] ?? '';
+$password = $_POST['password'] ?? '';
+$device_info = $_POST['device_info'] ?? '';
 
-    <input type="submit" value="Comparar Rostros">
-</form>
+// Validar campos
+if (strlen($cedula) !== 10 || !ctype_digit($cedula)) {
+    echo json_encode(["error" => "Cédula inválida"]);
+    exit;
+}
 
-<form action="http://127.0.0.1:82/" method="POST" enctype="multipart/form-data">
-    <label for="file">Selecciona una imagen:</label>
-    <input type="file" name="file" id="file" required><br><br>
-        
-    <label for="binary">Introduce la cadena binaria:</label><br>
-    <textarea name="binary" id="binary" rows="4" cols="50" required></textarea><br><br>
-        
-    <input type="submit" value="Enviar">
- </form>
- -->
+if (!preg_match('/^-?\d{1,3}\.\d{6,},\s?-?\d{1,3}\.\d{6,}$/', $gps)) {
+    echo json_encode(["error" => "GPS inválido"]);
+    exit;
+}
 
-<?php
+if (!filter_var($ip, FILTER_VALIDATE_IP)) {
+    echo json_encode(["error" => "IP inválida"]);
+    exit;
+}
 
-?>
-<!DOCTYPE html>
-<html lang="es">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SmartAttendance</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-</head>
-<body class="min-h-screen bg-blue-50 text-blue-900">
-    <!-- Navbar -->
-    <nav class="bg-blue-700 text-white p-4 shadow-lg">
-        <div class="container mx-auto flex justify-between items-center">
-            <h1 class="text-2xl font-bold">SmartAttendance</h1>
-            <ul class="flex space-x-6">
-                <li><a href="views/empleados.php" class="hover:underline">Empleados</a></li>
-                <li><a href="views/asistencia.php" class="hover:underline">Asistencia</a></li>
-                <li><a href="#contact" class="hover:underline">Contacto</a></li>
-            </ul>
-        </div>
-    </nav>
+if (empty($password)) {
+    echo json_encode(["error" => "Contraseña requerida"]);
+    exit;
+}
 
-    <!-- Hero Section -->
-    <header class="container mx-auto text-center py-20">
-        <h2 class="text-4xl font-bold text-blue-800">Automatiza la asistencia de tu equipo</h2>
-        <p class="mt-4 text-lg">Una solución eficiente y segura para gestionar la asistencia en tu organización.</p>
-        <button class="mt-6 bg-blue-700 hover:bg-blue-800 text-white py-2 px-6 rounded-lg shadow-lg text-lg">
-            Empezar Ahora
-        </button>
-    </header>
+if (empty($device_info)) {
+    echo json_encode(["error" => "Información del dispositivo requerida"]);
+    exit;
+}
 
-    <!-- Footer -->
-    <footer class="bg-blue-700 text-white text-center p-4 mt-16">
-        <p>&copy; 2025 SmartAttendance. Todos los derechos reservados.</p>
-    </footer>
-</body>
-</html>
+// Manejo del archivo de imagen
+if (!isset($_FILES['rostro'])) {
+    echo json_encode(["error" => "Imagen del rostro requerida"]);
+    exit;
+}
 
+$imagen = $_FILES['rostro'];
+$permitidos = ['image/jpeg', 'image/png', 'image/jpg'];
+if (!in_array($imagen['type'], $permitidos)) {
+    echo json_encode(["error" => "Formato de imagen no permitido"]);
+    exit;
+}
+
+$upload_dir = "../uploads/";
+if (!is_dir($upload_dir)) {
+    mkdir($upload_dir, 0755, true);
+}
+
+$nombre_archivo = uniqid() . "_" . basename($imagen['name']);
+$ruta_destino = $upload_dir . $nombre_archivo;
+
+if (!move_uploaded_file($imagen['tmp_name'], $ruta_destino)) {
+    echo json_encode(["error" => "Error al guardar la imagen"]);
+    exit;
+}
+
+// Respuesta exitosa
+$response = [
+    "mensaje" => "Datos recibidos correctamente",
+    "cedula" => $cedula,
+    "gps" => $gps,
+    "ip" => $ip,
+    "imagen_guardada" => $ruta_destino,
+    "device_info" => $device_info
+];
+
+echo json_encode($response);
