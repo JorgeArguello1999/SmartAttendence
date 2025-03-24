@@ -57,6 +57,8 @@ $decode = $decode['result'];
 $distance = $decode['distance'];
 $is_same = $decode['is_same'];
 
+// Guardar en la base de datos 
+
 // Delete files
 unlink("$dir.hex");
 unlink("$dir.$extension");

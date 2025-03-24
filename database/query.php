@@ -51,41 +51,33 @@ class RegistroAsistencia extends main{
     }
 
     public function save_asistencia($id_empleado, $tipo_registro, $fecha_hora, $image_verificacion, $confianza_reconocimiento, $latitud, $longitud, $id_sede, $perimetro, $ip_dispositivo, $ip_dispositivo_info, $estatus, $observaciones){
-        $confianza_reconocimiento = (float)0.1;
-        $sql = "INSERT INTO `RegistrosAsistencia` (`id_empleado`, `tipo_registro`, `fecha_hora`,
-        `imagen_verificacion`, `confianza_reconocimiento`, `latitud`, `longitud`, `id_sede`, `dentro_perimetro`,
-        `ip_dispositivo`, `dispositivo_info`, `estatus`, `observaciones`) 
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);";
+        // Preparar la consulta SQL
+        $sql = "INSERT INTO RegistrosAsistencia (
+            id_empleado, tipo_registro, fecha_hora, imagen_verificacion, latitud, longitud, dispositivo_info, ip_dispositivo,
+            id_sede, estatus, observaciones) 
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
+        // Preparar la consulta
         if ($smt = $this->conn->prepare($sql)) {
-            $smt->bind_param("isssbddiissss",
-                $id_empleado,
-                $tipo_registro,
-                $fecha_hora,
-                $image_verificacion,
-                $confianza_reconocimiento,
-                $latitud,
-                $longitud,
-                $id_sede,
-                $perimetro,
-                $ip_dispositivo,
-                $ip_dispositivo_info,
-                $estatus,
-                $observaciones
-            );
+            // Vincular los parámetros a la consulta
+            $smt->bind_param("isssdssssss", $id_empleado, $tipo_registro, $fecha_hora, $image_verificacion, $latitud, $longitud, $ip_dispositivo_info, $ip_dispositivo, $id_sede, $estatus, $observaciones);
 
+            // Ejecutar la consulta
             $result = false;
             if ($smt->execute()) {
                 $result = true;
             }
 
+            // Cerrar el statement
             $smt->close();
+
+            // Retornar el resultado
             return $result;
         } else {
+            // En caso de error en la preparación de la consulta, retornar el error
             return $this->conn->error;
         }
     }
-
 }
 
 class DatosBiometricos extends main{
