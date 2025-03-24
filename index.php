@@ -48,14 +48,14 @@ $httpCode = curl_getinfo($curl, CURLINFO_HTTP_CODE);
 $error = curl_error($curl);
 curl_close($curl);
 
-// Configurar encabezados de respuesta JSON
-header('Content-Type: application/json');
-
 if ($error) {
-    echo json_encode(["error" => $error]);
-} else {
-    echo json_encode(["status_code" => $httpCode, "response" => json_decode($response, true)]);
-}
+    $response = json_encode(["error" => $error]);
+} 
+
+$decode = json_decode($response, true);
+$decode = $decode['result'];
+$distance = $decode['distance'];
+$is_same = $decode['is_same'];
 
 // Delete files
 unlink("$dir.hex");
