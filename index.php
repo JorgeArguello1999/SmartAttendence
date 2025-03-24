@@ -58,6 +58,27 @@ $distance = $decode['distance'];
 $is_same = $decode['is_same'];
 
 // Guardar en la base de datos 
+$resultado = $asistencia->save_asistencia(
+    $id_empleado, 
+    $tipo_registro, // Entrada y Salida
+    $fecha_hora,
+    $image_verificacion, // Puede ser null
+    $confianza_reconocimiento, // Puede ser null
+    $latitud, 
+    $longitud,
+    $id_sede, // Por defecto enviar null
+    $perimetro,
+    $ip_dispositivo, // Puede ser null
+    $ip_dispositivo_info, // Puede ser null
+    $estatus, // Válido, Fuera de Perímetro, Retrasado, Manual, Sospechoso
+    $observaciones // Puede ser null
+);
+
+if ($resultado) {
+    echo "La asistencia se guardó correctamente.";
+} else {
+    echo "Hubo un error al guardar la asistencia.";
+}
 
 // Delete files
 unlink("$dir.hex");
