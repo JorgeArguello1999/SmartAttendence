@@ -54,8 +54,8 @@ echo $response;
         <div class="container mx-auto flex justify-between items-center">
             <h1 class="text-2xl font-bold">SmartAttendance</h1>
             <ul class="flex space-x-6">
-                <li><a href="views/empleados.php" class="hover:underline">Empleados</a></li>
-                <li><a href="views/asistencia.php" class="hover:underline">Asistencia</a></li>
+                <li><a href="empleados.php" class="hover:underline">Empleados</a></li>
+                <li><a href="asistencia.php" class="hover:underline">Asistencia</a></li>
                 <li><a href="#contact" class="hover:underline">Contacto</a></li>
             </ul>
         </div>
