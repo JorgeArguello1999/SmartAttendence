@@ -57,9 +57,28 @@ $decode = $decode['result'];
 $distance = $decode['distance'];
 $is_same = $decode['is_same'];
 
+// Datos de prueba obligatorios
+$tipo_registro = "Entrada";
+$fecha_hora = "2025-03-25 16:07:03.000000";
+$latitud = 40.7127837;
+$longitud = -74.0059413;
+$perimetro = 1;
+
+$estatus = "Sospechoso";
+if($is_same){
+    $estatus = "Válido";
+}
+
+// Datos opcionales
+$confianza_reconocimiento = $distance;
+$ip_dispositivo = "192.168.1.11";
+$ip_dispositivo_info = "Laptop";
+$observaciones = "All is well";
+
 // Guardar en la base de datos 
+$asistencia = new RegistroAsistencia();
 $resultado = $asistencia->save_asistencia(
-    $id_empleado, 
+    $id, 
     $tipo_registro, // Entrada y Salida
     $fecha_hora,
     $image_verificacion, // Puede ser null

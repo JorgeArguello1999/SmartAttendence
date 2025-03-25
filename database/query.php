@@ -50,34 +50,51 @@ class RegistroAsistencia extends main{
         return $result;
     }
 
-    public function save_asistencia($id_empleado, $tipo_registro, $fecha_hora, $image_verificacion, $confianza_reconocimiento, $latitud, $longitud, $id_sede, $perimetro, $ip_dispositivo, $ip_dispositivo_info, $estatus, $observaciones){
-        // Preparar la consulta SQL
+   public function save_asistencia($id_empleado, $tipo_registro, $fecha_hora, $image_verificacion, $confianza_reconocimiento, $latitud, $longitud, $id_sede, $perimetro, $ip_dispositivo, $ip_dispositivo_info, $estatus, $observaciones) {
+        // Preparar la consulta SQL con todas las columnas correctas
         $sql = "INSERT INTO RegistrosAsistencia (
-            id_empleado, tipo_registro, fecha_hora, imagen_verificacion, latitud, longitud, dispositivo_info, ip_dispositivo,
-            id_sede, estatus, observaciones) 
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+            id_empleado, tipo_registro, fecha_hora, imagen_verificacion, confianza_reconocimiento, latitud, longitud, 
+            id_sede, dentro_perimetro, ip_dispositivo, dispositivo_info, estatus, observaciones) 
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
         // Preparar la consulta
-        if ($smt = $this->conn->prepare($sql)) {
-            // Vincular los parámetros a la consulta
-            $smt->bind_param("isssdssssss", $id_empleado, $tipo_registro, $fecha_hora, $image_verificacion, $latitud, $longitud, $ip_dispositivo_info, $ip_dispositivo, $id_sede, $estatus, $observaciones);
-
-            // Ejecutar la consulta
-            $result = false;
-            if ($smt->execute()) {
-                $result = true;
+        if ($stmt = $this->conn->prepare($sql)) {
+            // Enviar datos de imagen si no es null
+            if (!is_null($image_verificacion)) {
+                $stmt->send_long_data(3, $image_verificacion);
             }
 
-            // Cerrar el statement
-            $smt->close();
+            // Vincular los parámetros a la consulta
+            $stmt->bind_param("isssdsdssssss", 
+                $id_empleado, 
+                $tipo_registro, 
+                $fecha_hora, 
+                $image_verificacion, 
+                $confianza_reconocimiento, 
+                $latitud, 
+                $longitud, 
+                $id_sede, 
+                $perimetro, 
+                $ip_dispositivo, 
+                $ip_dispositivo_info, 
+                $estatus, 
+                $observaciones
+            );
 
-            // Retornar el resultado
+            // Ejecutar la consulta
+            $result = $stmt->execute();
+            
+            // Cerrar el statement
+            $stmt->close();
+
             return $result;
         } else {
-            // En caso de error en la preparación de la consulta, retornar el error
-            return $this->conn->error;
+            // Capturar errores
+            error_log("Error en la consulta SQL: " . $this->conn->error);
+            return false;
         }
     }
+ 
 }
 
 class DatosBiometricos extends main{
