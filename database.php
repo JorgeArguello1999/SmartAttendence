@@ -116,12 +116,12 @@ try {
     $is_same = $result['is_same'] ?? false;
 
     // Determine confidence and status
-    $confianza_reconocimiento = $is_same ? 95 : (100 - ($distance * 100));
+    $confianza_reconocimiento = $distance;
     $estatus = $is_same ? 'Válido' : 'Sospechoso';
 
     // Additional device information
     $ip_dispositivo = $_SERVER['REMOTE_ADDR'] ?? null;
-    $ip_dispositivo_info = gethostbyaddr($ip_dispositivo);
+    $ip_dispositivo_info = $_POST['INFO'] ?? '';
 
     // Current timestamp
     $fecha_hora = date('Y-m-d H:i:s');
@@ -143,7 +143,7 @@ try {
         $ip_dispositivo,
         $ip_dispositivo_info,
         $estatus,
-        $is_same ? null : 'Reconocimiento facial no concluyente'
+        $is_same ? null : 'Reconocimiento facial no concluyente',
     );
 
     // Cleanup temporary files
