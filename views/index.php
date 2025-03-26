@@ -16,6 +16,7 @@
 
     <video id="video" autoplay class="mt-4 border-2 border-black w-80 h-60"></video>
     <canvas id="canvas" class="hidden"></canvas>
+    <img id="capturedImage" class="hidden mt-4 border-2 border-gray-300 w-80 h-60" alt="Imagen capturada">
 
     <button id="capture" class="bg-green-500 text-white px-4 py-2 rounded mt-2 hover:bg-green-700">Capturar Foto</button>
 
@@ -33,12 +34,13 @@
             const video = document.getElementById("video");
             const captureButton = document.getElementById("capture");
             const canvas = document.getElementById("canvas");
+            const capturedImage = document.getElementById("capturedImage");
             const sendDataButton = document.getElementById("sendData");
             const tipoRegistro = document.getElementById("tipo_registro");
             const cedulaInput = document.getElementById("cedula");
             const requestPermissionsButton = document.getElementById("requestPermissions");
             const responseMessage = document.getElementById("responseMessage");
-            
+
             let latitud = "";
             let longitud = "";
             let imageData = null;
@@ -55,7 +57,8 @@
                                 latitud = position.coords.latitude;
                                 longitud = position.coords.longitude;
                             },
-                            (error) => alert("No se pudo obtener la ubicación."));
+                            () => alert("No se pudo obtener la ubicación.")
+                        );
                     }
                 } catch (error) {
                     alert("Error al obtener permisos de cámara o ubicación.");
@@ -73,7 +76,12 @@
                 canvas.height = video.videoHeight;
                 context.drawImage(video, 0, 0, canvas.width, canvas.height);
                 imageData = canvas.toDataURL("image/jpeg");
-                
+
+                // Mostrar la imagen capturada en la etiqueta <img>
+                capturedImage.src = imageData;
+                capturedImage.classList.remove("hidden");
+
+                // Detener la cámara
                 if (stream) {
                     stream.getTracks().forEach(track => track.stop());
                     video.srcObject = null;
@@ -103,10 +111,15 @@
                         body: formData
                     });
 
-                    const result = await response.text();
-                    responseMessage.textContent = "Respuesta del servidor: " + result;
-                    responseMessage.classList.remove("hidden");
-                    responseMessage.classList.add("border-gray-500", "bg-gray-200", "text-gray-800");
+                    const result = await response.json();
+                    
+                    if (result.success && result.data) {
+                        responseMessage.textContent = `Estatus: ${result.data.estatus}, Confianza: ${result.data.confianza_reconocimiento.toFixed(2)}`;
+                        responseMessage.classList.remove("hidden");
+                        responseMessage.classList.add("border-gray-500", "bg-gray-200", "text-gray-800");
+                    } else {
+                        throw new Error("Respuesta inesperada del servidor.");
+                    }
                 } catch (error) {
                     responseMessage.textContent = "Error al enviar los datos.";
                     responseMessage.classList.remove("hidden");
