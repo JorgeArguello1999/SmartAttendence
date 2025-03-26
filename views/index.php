@@ -14,9 +14,11 @@
 
     <button id="requestPermissions" class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-700">Solicitar Permisos</button>
 
-    <video id="video" autoplay class="mt-4 border-2 border-black w-80 h-60"></video>
+    <div class="relative mt-4 w-80 h-60 border-2 border-black">
+        <video id="video" autoplay class="absolute top-0 left-0 w-full h-full"></video>
+        <img id="capturedImage" class="absolute top-0 left-0 w-full h-full hidden" alt="Imagen capturada">
+    </div>
     <canvas id="canvas" class="hidden"></canvas>
-    <img id="capturedImage" class="hidden mt-4 border-2 border-gray-300 w-80 h-60" alt="Imagen capturada">
 
     <button id="capture" class="bg-green-500 text-white px-4 py-2 rounded mt-2 hover:bg-green-700">Capturar Foto</button>
 
@@ -77,7 +79,7 @@
                 context.drawImage(video, 0, 0, canvas.width, canvas.height);
                 imageData = canvas.toDataURL("image/jpeg");
 
-                // Mostrar la imagen capturada en la etiqueta <img>
+                // Mostrar la imagen capturada sobre el video
                 capturedImage.src = imageData;
                 capturedImage.classList.remove("hidden");
 
@@ -106,7 +108,7 @@
                 formData.append("longitud", longitud);
 
                 try {
-                    const response = await fetch("http://localhost:82/index.php", { // URL aquí 
+                    const response = await fetch("http://localhost:82/index.php", { 
                         method: "POST",
                         body: formData
                     });
