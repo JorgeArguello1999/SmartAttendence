@@ -24,7 +24,7 @@ document.addEventListener("DOMContentLoaded", () => {
                     (position) => {
                         latitud = position.coords.latitude;
                         longitud = position.coords.longitude;
-                        alert(`Ubicación obtenida: Lat ${latitud}, Lon ${longitud}`);
+                        console.log(`Latitud: ${latitud}\nLogitud: ${longitud}`);
                     },
                     (error) => {
                         console.error("Error obteniendo la ubicación:", error);
@@ -89,7 +89,7 @@ document.addEventListener("DOMContentLoaded", () => {
         formData.append("info", "hola");
 
         try {
-            const response = await fetch("http://127.0.0.1:82/index.php", {
+            const response = await fetch("http://localhost:82/index.php", {
                 method: "POST",
                 body: formData
             });
