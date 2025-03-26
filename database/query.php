@@ -39,7 +39,7 @@ class RegistroAsistencia extends main{
         Empleados.apellidos, Empleados.email, Empleados.telefono, 
         RegistrosAsistencia.fecha_hora, RegistrosAsistencia.dispositivo_info, 
         RegistrosAsistencia.estatus, RegistrosAsistencia.imagen_verificacion, 
-        Sedes.nombre, Sedes.latitud, Sedes.longitud 
+        Sedes.nombre, RegistrosAsistencia.latitud, RegistrosAsistencia.longitud 
         FROM RegistrosAsistencia 
         INNER JOIN Empleados ON Empleados.id_empleado = RegistrosAsistencia.id_empleado 
         LEFT JOIN Sedes ON Sedes.id_sede = RegistrosAsistencia.id_sede 
