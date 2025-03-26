@@ -11,10 +11,10 @@ echo '
 <body class="bg-gray-100 p-6">
     <nav class="bg-blue-600 p-4 text-white shadow-md mb-6">
         <ul class="flex space-x-4">
-            <li><a href="ver_asistencia.php" class="hover:underline">Asistencia</a></li>
-            <li><a href="index.php" class="hover:underline">Biométrico</a></li>
-            <li><a href="" class="hover:underline">Empleados</a></li>
-            <li><a href="#" class="hover:underline">Guardar Empleado</a></li>
+            <li><a href="index.php" class="hover:underline">🫆 Biométrico</a></li>
+            <li><a href="ver_asistencia.php" class="hover:underline">👩🏻‍🏫 Asistencia</a></li>
+            <li><a href="ver_empleados.php" class="hover:underline">👷🏻‍♂️ Empleados</a></li>
+            <li><a href="#" class="hover:underline">🆕 Guardar Empleado</a></li>
         </ul>
     </nav>
 ';
