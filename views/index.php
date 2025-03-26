@@ -114,7 +114,7 @@
                     const result = await response.json();
                     
                     if (result.success && result.data) {
-                        responseMessage.textContent = `Estatus: ${result.data.estatus}, Confianza: ${result.data.confianza_reconocimiento.toFixed(2)}`;
+                        responseMessage.textContent = `Nombre: ${result.data.nombres}\nEstatus: ${result.data.estatus}\nConfianza: ${result.data.confianza_reconocimiento.toFixed(2)}`;
                         responseMessage.classList.remove("hidden");
                         responseMessage.classList.add("border-gray-500", "bg-gray-200", "text-gray-800");
                     } else {
