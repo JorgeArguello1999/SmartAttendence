@@ -35,17 +35,15 @@ class RegistroAsistencia extends main{
 
     public function get_all(){
         $sql = "SELECT 
-            RegistrosAsistencia.id_empleado, 
-            Empleados.nombres, Empleados.apellidos, 
-            Empleados.email, Empleados.telefono, 
-            RegistrosAsistencia.fecha_hora, 
-            RegistrosAsistencia.dispositivo_info,
-            RegistrosAsistencia.estatus, 
-            RegistrosAsistencia.imagen_verificacion, 
-            Sedes.nombre, Sedes.latitud, Sedes.longitud 
+        RegistrosAsistencia.id_empleado, Empleados.nombres, 
+        Empleados.apellidos, Empleados.email, Empleados.telefono, 
+        RegistrosAsistencia.fecha_hora, RegistrosAsistencia.dispositivo_info, 
+        RegistrosAsistencia.estatus, RegistrosAsistencia.imagen_verificacion, 
+        Sedes.nombre, Sedes.latitud, Sedes.longitud 
         FROM RegistrosAsistencia 
         INNER JOIN Empleados ON Empleados.id_empleado = RegistrosAsistencia.id_empleado 
-        INNER JOIN Sedes ON Sedes.id_sede = RegistrosAsistencia.id_sede; ";
+        LEFT JOIN Sedes ON Sedes.id_sede = RegistrosAsistencia.id_sede 
+        WHERE RegistrosAsistencia.id_sede IS NULL OR Sedes.id_sede IS NOT NULL; ";
         $result = mysqli_query($this->conn, $sql);
         return $result;
     }
