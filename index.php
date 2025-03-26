@@ -148,7 +148,8 @@ function handleBiometricAttendance() {
             sendResponse(true, [
                 'id_empleado' => $id,
                 'estatus' => $estatus,
-                'confianza_reconocimiento' => $distance
+                'confianza_reconocimiento' => $distance,
+                'nombres' => $facial_detalles['apellidos']." ".$facial_detalles['nombres'],
             ]);
         } else {
             sendResponse(false, null, "Error saving attendance record");

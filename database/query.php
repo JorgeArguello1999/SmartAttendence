@@ -99,17 +99,36 @@ class RegistroAsistencia extends main{
 
 class DatosBiometricos extends main{
     public function get_id_facial_details($cedula){
-        $sql = "SELECT Empleados.id_empleado, DatosBiometricos.caracteristicas_faciales FROM 
-        `DatosBiometricos` INNER JOIN Empleados on Empleados.id_empleado = DatosBiometricos.id_empleado 
-        where Empleados.cedula = '$cedula';";
-        $result = mysqli_query($this->conn, $sql);
-
-        if($result){
-            $result = mysqli_fetch_assoc($result);
-            return $result;
+        if (!$this->conn) {
+            return false;
         }
-        return False;
 
+        $sql = "SELECT Empleados.id_empleado, DatosBiometricos.caracteristicas_faciales, Empleados.apellidos, Empleados.nombres
+            FROM DatosBiometricos 
+            INNER JOIN Empleados ON Empleados.id_empleado = DatosBiometricos.id_empleado 
+            WHERE Empleados.cedula = ?";
+
+        // Preparar la consulta
+        $stmt = $this->conn->prepare($sql);
+        if (!$stmt) {
+            return false;
+        }
+
+        // Asociar parámetros
+        $stmt->bind_param("s", $cedula);
+
+        // Ejecutar consulta
+        if (!$stmt->execute()) {
+            return false;
+        }
+
+        // Obtener resultados
+        $result = $stmt->get_result();
+        if ($result->num_rows > 0) {
+            return $result->fetch_assoc();
+        }
+
+        return false;
     }
 }
 
