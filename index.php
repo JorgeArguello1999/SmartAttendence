@@ -90,7 +90,7 @@ function handleBiometricAttendance() {
         move_uploaded_file($_FILES['image']['tmp_name'], $rutaDestino);
 
         // Send to CheckID service
-        $uploadUrl = 'http://127.0.0.1:8000/compare_binary/';
+        $uploadUrl = 'http://127.0.0.1:8000/compare_binary/';  // URL para la API
         $curl = curl_init();
         curl_setopt_array($curl, [
             CURLOPT_URL => $uploadUrl,

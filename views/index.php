@@ -106,7 +106,7 @@
                 formData.append("longitud", longitud);
 
                 try {
-                    const response = await fetch("http://localhost:82/index.php", {
+                    const response = await fetch("http://localhost:82/index.php", { // URL aquí 
                         method: "POST",
                         body: formData
                     });
