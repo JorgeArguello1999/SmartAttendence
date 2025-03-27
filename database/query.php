@@ -22,9 +22,9 @@ class Empleados extends main{
             Departamentos.nombre as departamento, 
             DatosBiometricos.imagen_rostro 
         from Empleados 
-        INNER JOIN Departamentos ON Departamentos.id_departamento = Empleados.id_departamento 
-        INNER JOIN Cargos on Cargos.id_cargo = Empleados.id_cargo 
-        INNER JOIN DatosBiometricos ON DatosBiometricos.id_empleado = Empleados.id_empleado; ";
+        LEFT JOIN Departamentos ON Departamentos.id_departamento = Empleados.id_departamento 
+        LEFT JOIN Cargos on Cargos.id_cargo = Empleados.id_cargo 
+        LEFT JOIN DatosBiometricos ON DatosBiometricos.id_empleado = Empleados.id_empleado; ";
         $result = mysqli_query($this->conn, $sql);
         return $result;
     }
