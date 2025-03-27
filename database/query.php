@@ -29,7 +29,7 @@ class Empleados extends main{
         return $result;
     }
 
-public function insertarEmpleado($cedula, $nombres, $apellidos, $email, $telefono, $fecha_contratacion, $id_departamento) {
+    public function insertarEmpleado($cedula, $nombres, $apellidos, $email, $telefono, $fecha_contratacion, $id_departamento) {
         // Valor por defecto para estado
         $estado = 'Activo';
 
@@ -163,6 +163,38 @@ class DatosBiometricos extends main{
         }
 
         return false;
+    }
+
+    public function insertar_datos_biometricos($id_empleado, $imagen_rostro, $caracteristicas_faciales){
+        $sql = "INSERT INTO DatosBiometricos (id_empleado, imagen_rostro, caracteristicas_faciales, fecha_registro) 
+                VALUES (?, ?, ?, CURRENT_TIMESTAMP())";
+
+        // Preparar la consulta
+        if ($stmt = $this->conn->prepare($sql)) {
+            // Enviar datos de imagen si no es null
+            if (!is_null($imagen_rostro)) {
+                $stmt->send_long_data(1, $imagen_rostro);
+            }
+
+            // Vincular los parámetros a la consulta
+            $stmt->bind_param("iss", 
+                $id_empleado, 
+                $imagen_rostro, 
+                $caracteristicas_faciales
+            );
+
+            // Ejecutar la consulta
+            $result = $stmt->execute();
+            
+            // Cerrar el statement
+            $stmt->close();
+
+            return $result;
+        } else {
+            // Capturar errores
+            error_log("Error en la consulta SQL: " . $this->conn->error);
+            return false;
+        }
     }
 }
 
