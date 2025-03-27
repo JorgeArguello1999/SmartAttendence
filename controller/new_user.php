@@ -1,9 +1,11 @@
 <?php
 require_once '../database/query.php';
+require_once '../api/get_binary.php';
 
 class EmpleadoController {
     private $modelo;
     private $biometricos; 
+    private $get_binary;
 
     public function __construct() {
         $this->modelo = new Empleados();
@@ -32,11 +34,16 @@ class EmpleadoController {
             // Paso 2: Insertar los datos biométricos si se subió una imagen
             if (!empty($_FILES['imagen_rostro']) && isset($_POST['caracteristicas_faciales'])) {
                 $imagen_rostro = file_get_contents($_FILES['imagen_rostro']['tmp_name']);
-                $caracteristicas_faciales = $_POST['caracteristicas_faciales'];
+
 
                 // Obtener el id manualmente
                 $id_empleado = $this->modelo->get_id_from_cedula($cedula);
                 $id_empleado = $id_empleado['id_empleado'];
+
+                // Obtener el hex
+                // $caracteristicas_faciales = $_POST['caracteristicas_faciales'];
+                $caracteristicas_faciales = uploadImageToAPI($_FILES['imagen_rostro']);
+                $caracteristicas_faciales = $caracteristicas_faciales['message'];
 
                 // Insertar datos biométricos
                 $resultado = $this->biometricos->insertar_datos_biometricos($id_empleado, $imagen_rostro, $caracteristicas_faciales);
