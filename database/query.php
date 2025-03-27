@@ -112,23 +112,20 @@ class RegistroAsistencia extends main{
         $result = mysqli_query($this->conn, $sql);
         return $result;
     }
-
-   public function save_asistencia($id_empleado, $tipo_registro, $fecha_hora, $image_verificacion, $confianza_reconocimiento, $latitud, $longitud, $id_sede, $perimetro, $ip_dispositivo, $ip_dispositivo_info, $estatus, $observaciones) {
+    
+    public function save_asistencia($id_empleado, $tipo_registro, $fecha_hora, $image_verificacion, $confianza_reconocimiento, $latitud, $longitud, $id_sede, $perimetro, $ip_dispositivo, $ip_dispositivo_info, $estatus, $observaciones) {
         // Preparar la consulta SQL con todas las columnas correctas
         $sql = "INSERT INTO RegistrosAsistencia (
-            id_empleado, tipo_registro, fecha_hora, imagen_verificacion, confianza_reconocimiento, latitud, longitud, 
-            id_sede, dentro_perimetro, ip_dispositivo, dispositivo_info, estatus, observaciones) 
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+            id_empleado, tipo_registro, fecha_hora, imagen_verificacion, confianza_reconocimiento, 
+            latitud, longitud, id_sede, dentro_perimetro, ip_dispositivo, 
+            dispositivo_info, estatus, observaciones
+        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
-        // Preparar la consulta
+        // Verificar si hay imagen antes de preparar
         if ($stmt = $this->conn->prepare($sql)) {
-            // Enviar datos de imagen si no es null
-            if (!is_null($image_verificacion)) {
-                $stmt->send_long_data(3, $image_verificacion);
-            }
-
-            // Vincular los parámetros a la consulta
-            $stmt->bind_param("isssdsdssssss", 
+            // Vincular los parámetros, usando tipos de datos apropiados
+            $stmt->bind_param(
+                "isssdsdssssss", 
                 $id_empleado, 
                 $tipo_registro, 
                 $fecha_hora, 
@@ -144,20 +141,39 @@ class RegistroAsistencia extends main{
                 $observaciones
             );
 
-            // Ejecutar la consulta
-            $result = $stmt->execute();
-            
-            // Cerrar el statement
-            $stmt->close();
+            // Manejo específico para datos largos (imagen)
+            if (!is_null($image_verificacion)) {
+                // Usar send_long_data si la imagen es grande
+                $stmt->send_long_data(3, $image_verificacion);
+            }
 
-            return $result;
+            // Ejecutar la consulta
+            try {
+                $result = $stmt->execute();
+                
+                // Verificar si la inserción fue exitosa
+                if ($result) {
+                    $last_id = $this->conn->insert_id; // Obtener el ID del último registro insertado
+                    $stmt->close();
+                    return $last_id; // Devolver el ID del registro insertado
+                } else {
+                    // Registro de error si la ejecución falla
+                    error_log("Error al ejecutar la inserción: " . $stmt->error);
+                    $stmt->close();
+                    return false;
+                }
+            } catch (Exception $e) {
+                // Capturar cualquier excepción durante la ejecución
+                error_log("Excepción al guardar asistencia: " . $e->getMessage());
+                $stmt->close();
+                return false;
+            }
         } else {
-            // Capturar errores
-            error_log("Error en la consulta SQL: " . $this->conn->error);
+            // Capturar errores de preparación de la consulta
+            error_log("Error en la preparación de la consulta SQL: " . $this->conn->error);
             return false;
         }
     }
- 
 }
 
 class DatosBiometricos extends main{
