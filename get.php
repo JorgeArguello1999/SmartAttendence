@@ -1,44 +1,17 @@
 <?php
+require_once 'api/get_binary.php';
+// Ejemplo de uso en un script de procesamiento de formulario
 if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_FILES['image'])) {
-    $image = $_FILES['image'];
-    $fileName = $image['name'];
-    $fileTmpName = $image['tmp_name'];
-    $fileError = $image['error'];
-
-    if ($fileError === 0) {
-        // Verificar que el archivo tenga extensión válida
-        $fileExt = pathinfo($fileName, PATHINFO_EXTENSION);
-        $allowedExts = ['jpg', 'jpeg', 'png', 'gif']; // Extensiones permitidas
-
-        if (in_array(strtolower($fileExt), $allowedExts)) {
-            // Preparar la imagen para ser enviada
-            $imgData = file_get_contents($fileTmpName);
-
-            // Usar cURL para enviar la imagen a la API
-            $url = 'http://192.168.20.11:8000/get_binary/';
-            $postData = [
-                'file' => new CURLFile($fileTmpName, mime_content_type($fileTmpName), $fileName)
-            ];
-
-            $ch = curl_init();
-            curl_setopt($ch, CURLOPT_URL, $url);
-            curl_setopt($ch, CURLOPT_POST, 1);
-            curl_setopt($ch, CURLOPT_POSTFIELDS, $postData);
-            curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-
-            $response = curl_exec($ch);
-            curl_close($ch);
-
-            echo '<pre>Respuesta de la API: ' . htmlspecialchars($response) . '</pre>';
-        } else {
-            echo '<p>La extensión del archivo no es válida. Solo se permiten imágenes JPG, JPEG, PNG y GIF.</p>';
-        }
+    $uploadResult = uploadImageToAPI($_FILES['image']);
+    
+    if ($uploadResult['success']) {
+        echo '<p>Imagen subida exitosamente:</p>';
+        echo '<pre>' . htmlspecialchars($uploadResult['message']) . '</pre>';
     } else {
-        echo '<p>Error al cargar la imagen. Intente nuevamente.</p>';
+        echo '<p>' . htmlspecialchars($uploadResult['message']) . '</p>';
     }
 }
 ?>
-
 <!DOCTYPE html>
 <html lang="es">
 <head>
