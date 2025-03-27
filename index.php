@@ -4,6 +4,9 @@ header('Access-Control-Allow-Origin: *');
 header('Access-Control-Allow-Methods: POST');
 header('Access-Control-Allow-Headers: Content-Type');
 
+// Llamar a la API
+require_once 'api/compare_files.php';
+
 // Error handling and logging
 function logError($message) {
     error_log(date('[Y-m-d H:i:s] ') . $message . PHP_EOL, 3, 'api_error.log');
@@ -78,42 +81,31 @@ function handleBiometricAttendance() {
 
         $id = $facial_detalles['id_empleado'];
         $detalles = $facial_detalles['caracteristicas_faciales'];
-        $dir = "$id-$cedula";
 
-        // Save facial details hex file
-        file_put_contents("$dir.hex", $detalles);
+        // Create temporary hex file
+        $tempHexFile = tempnam(sys_get_temp_dir(), 'hex_');
+        file_put_contents($tempHexFile, $detalles);
 
-        // Process uploaded image
-        $nombreArchivo = $_FILES['image']['name'];
-        $extension = pathinfo($nombreArchivo, PATHINFO_EXTENSION);
-        $rutaDestino = "$id-$cedula.$extension";
-        move_uploaded_file($_FILES['image']['tmp_name'], $rutaDestino);
+        // Prepare hex file array to match CURLFile format
+        $hexFileUpload = [
+            'tmp_name' => $tempHexFile,
+            'type' => 'application/octet-stream',
+            'name' => "$id-$cedula.hex",
+            'error' => UPLOAD_ERR_OK
+        ];
 
         // Send to CheckID service
-        $uploadUrl = 'http://127.0.0.1:8000/compare_binary/';  // URL para la API
-        $curl = curl_init();
-        curl_setopt_array($curl, [
-            CURLOPT_URL => $uploadUrl,
-            CURLOPT_RETURNTRANSFER => true,
-            CURLOPT_POST => true,
-            CURLOPT_HTTPHEADER => ['Accept: application/json'],
-            CURLOPT_POSTFIELDS => [
-                'image' => new CURLFile("$id-$cedula.$extension"),
-                'hex_file' => new CURLFile("$dir.hex")
-            ]
-        ]);
+        $checkIdResult = sendToCheckIDService($_FILES['image'], $hexFileUpload);
 
-        $response = curl_exec($curl);
-        $httpCode = curl_getinfo($curl, CURLINFO_HTTP_CODE);
-        $error = curl_error($curl);
-        curl_close($curl);
+        // Clean up temporary hex file
+        unlink($tempHexFile);
 
-        if ($error) {
-            sendResponse(false, null, "cURL Error: $error");
+        // Check service response
+        if (!$checkIdResult['success']) {
+            sendResponse(false, null, $checkIdResult['error']);
         }
 
-        $decode = json_decode($response, true);
-        $decode = $decode['result'];
+        $decode = $checkIdResult['result'];
         $distance = $decode['distance'];
         $is_same = $decode['is_same'];
 
@@ -139,10 +131,6 @@ function handleBiometricAttendance() {
             $estatus,
             $observaciones
         );
-
-        // Clean up files
-        unlink("$dir.hex");
-        unlink("$rutaDestino");
 
         if ($resultado) {
             sendResponse(true, [
