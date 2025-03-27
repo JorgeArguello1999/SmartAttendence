@@ -28,6 +28,42 @@ class Empleados extends main{
         $result = mysqli_query($this->conn, $sql);
         return $result;
     }
+
+public function insertarEmpleado($cedula, $nombres, $apellidos, $email, $telefono, $fecha_contratacion, $id_departamento) {
+        // Valor por defecto para estado
+        $estado = 'Activo';
+
+        // Consulta SQL corregida con las columnas y valores correctos
+        $sql = "INSERT INTO Empleados (cedula, nombres, apellidos, email, telefono, fecha_contratacion, id_departamento, estado) 
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
+
+        // Preparar la consulta
+        if ($stmt = $this->conn->prepare($sql)) {
+            // Vincular los parámetros a la consulta
+            $stmt->bind_param("ssssssis", 
+                $cedula, 
+                $nombres, 
+                $apellidos, 
+                $email, 
+                $telefono, 
+                $fecha_contratacion, 
+                $id_departamento, 
+                $estado  // Se agrega aquí correctamente
+            );
+
+            // Ejecutar la consulta
+            $result = $stmt->execute();
+            
+            // Cerrar el statement
+            $stmt->close();
+
+            return $result;
+        } else {
+            // Capturar errores
+            error_log("Error en la consulta SQL: " . $this->conn->error);
+            return false;
+        }
+    }
 }
 
 class RegistroAsistencia extends main{
