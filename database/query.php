@@ -29,6 +29,35 @@ class Empleados extends main{
         return $result;
     }
 
+    public function get_id_from_cedula($cedula) {
+        $sql = "SELECT Empleados.id_empleado, Empleados.cedula, Empleados.nombres, Empleados.apellidos
+                FROM Empleados WHERE Empleados.cedula = ? LIMIT 1;";
+
+        if ($stmt = $this->conn->prepare($sql)) {
+            $stmt->bind_param("s", $cedula);
+            $stmt->execute();
+            $stmt->store_result();
+            if ($stmt->num_rows > 0) {
+                $stmt->bind_result($id_empleado, $cedula, $nombres, $apellidos);
+                $stmt->fetch();
+                $empleado = [
+                    'id_empleado' => $id_empleado,
+                    'cedula' => $cedula,
+                    'nombres' => $nombres,
+                    'apellidos' => $apellidos
+                ];
+                $stmt->close();
+                return $empleado;
+            } else {
+                $stmt->close();
+                return false;
+            }
+        } else {
+            error_log("Error en la consulta: " . $this->conn->error);
+            return false;
+        }
+    }
+    
     public function insertarEmpleado($cedula, $nombres, $apellidos, $email, $telefono, $fecha_contratacion, $id_departamento) {
         // Valor por defecto para estado
         $estado = 'Activo';

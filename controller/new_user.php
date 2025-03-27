@@ -1,10 +1,18 @@
 <?php
-// Controlar la inserción de usuario 
 require_once '../database/query.php';
 
 class EmpleadoController {
-    public function agregarEmpleado() {
+    private $modelo;
+    private $biometricos; 
+
+    public function __construct() {
+        $this->modelo = new Empleados();
+        $this->biometricos = new DatosBiometricos();
+    }
+
+    public function registrarEmpleadoConBiometria() {
         if ($_SERVER["REQUEST_METHOD"] == "POST") {
+            // Paso 1: Insertar el usuario en la base de datos
             $cedula = $_POST['cedula'];
             $nombre = $_POST['nombre'];
             $apellido = $_POST['apellido'];
@@ -14,23 +22,34 @@ class EmpleadoController {
             $departamento_id = $_POST['departamento_id'];
             $cargo_id = $_POST['cargo_id'];
 
-            // Validaciones básicas
-            if (!filter_var($correo, FILTER_VALIDATE_EMAIL)) {
-                die("Correo inválido.");
-            }
-            if (!is_numeric($telefono) || strlen($telefono) < 7) {
-                die("Número de teléfono inválido.");
+            // Insertamos el empleado y obtenemos el ID generado
+            $id_empleado = $this->modelo->insertarEmpleado($cedula, $nombre, $apellido, $correo, $telefono, $fecha_ingreso, $departamento_id, $cargo_id);
+
+            if (!$id_empleado) {
+                die(json_encode(["status" => "error", "message" => "Error al registrar el empleado."]));
             }
 
-            $empleado = new Empleados();
-            $resultado = $empleado->insertarEmpleado($cedula, $nombre, $apellido, $correo, $telefono, $fecha_ingreso, $departamento_id, $cargo_id);
+            // Paso 2: Insertar los datos biométricos si se subió una imagen
+            if (!empty($_FILES['imagen_rostro']) && isset($_POST['caracteristicas_faciales'])) {
+                $imagen_rostro = file_get_contents($_FILES['imagen_rostro']['tmp_name']);
+                $caracteristicas_faciales = $_POST['caracteristicas_faciales'];
 
-            if ($resultado) {
-                echo "<script>alert('Empleado insertado correctamente.'); window.location.href='ver_empleados.php';</script>";
-            } else {
-                echo "<script>alert('Error al insertar el empleado.'); window.history.back();</script>";
+                // Obtener el id manualmente
+                $id_empleado = $this->modelo->get_id_from_cedula($cedula);
+                $id_empleado = $id_empleado['id_empleado'];
+
+                // Insertar datos biométricos
+                $resultado = $this->biometricos->insertar_datos_biometricos($id_empleado, $imagen_rostro, $caracteristicas_faciales);
+
+                if (!$resultado) {
+                    die(json_encode(["status" => "error", "message" => "Error al registrar los datos biométricos."]));
+                }
             }
+
+            // Respuesta de éxito
+            echo json_encode(["status" => "success", "message" => "Empleado y datos biométricos registrados correctamente."]);
+        } else {
+            die(json_encode(["status" => "error", "message" => "Método no permitido."]));
         }
     }
 }
-?>
