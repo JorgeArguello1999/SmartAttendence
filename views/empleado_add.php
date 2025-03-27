@@ -1,35 +1,13 @@
 <?php 
 
 require_once '../views/template.php';
-require_once '../database/query.php';
+require_once '../controller/new_user.php';
+$controller = new EmpleadoController();
 
-if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    $cedula = $_POST['cedula'];
-    $nombre = $_POST['nombre'];
-    $apellido = $_POST['apellido'];
-    $correo = $_POST['correo'];
-    $telefono = $_POST['telefono'];
-    $fecha_ingreso = $_POST['fecha_ingreso'];
-    $departamento_id = $_POST['departamento_id'];
-    $cargo_id = $_POST['cargo_id'];
-
-    // Validaciones básicas
-    if (!filter_var($correo, FILTER_VALIDATE_EMAIL)) {
-        die("Correo inválido.");
-    }
-    if (!is_numeric($telefono) || strlen($telefono) < 7) {
-        die("Número de teléfono inválido.");
-    }
-
-    $empleado = new Empleados();
-    $result = $empleado->insertarEmpleado($cedula, $nombre, $apellido, $correo, $telefono, $fecha_ingreso, $departamento_id, $cargo_id);
-
-    if ($result) {
-        echo "<script>alert('Empleado insertado correctamente.'); window.location.href='ver_empleados.php';</script>";
-    } else {
-        echo "<script>alert('Error al insertar el empleado.'); window.history.back();</script>";
-    }
-} 
+if($_SERVER['REQUEST_METHOD'] == 'POST'){
+    $controller->agregarEmpleado();
+}
+ 
 ?>
 <body class="bg-gray-100 flex items-center justify-center h-screen">
     <div class="bg-white p-8 rounded-xl shadow-md w-full max-w-md">
