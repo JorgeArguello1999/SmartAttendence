@@ -113,6 +113,7 @@ document.addEventListener("DOMContentLoaded", () => {
         formData.append("tipo_registro", tipoRegistro.value);
         formData.append("latitud", latitud);
         formData.append("longitud", longitud);
+        formData.append("ip_dispositivo_info", "Guardado desde navegador");
 
         try {
             const response = await fetch("<?php echo $main_api_url; ?>", { 
