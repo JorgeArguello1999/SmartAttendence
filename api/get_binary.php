@@ -1,6 +1,6 @@
 <?php
 
-function uploadImageToAPI($imageFile, $apiUrl = 'http://192.168.20.11:8000/get_binary/') {
+function uploadImageToAPI($imageFile, $apiUrl = 'http://127.0.0.1:8000/get_binary/') {
     // Validaciones previas (igual que en el ejemplo anterior)
     if ($imageFile['error'] !== UPLOAD_ERR_OK) {
         return ['success' => false, 'message' => 'Error al cargar la imagen. Intente nuevamente.'];
