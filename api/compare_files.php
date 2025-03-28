@@ -1,6 +1,6 @@
 <?php
 
-function sendToCheckIDService($uploadedImage, $hexFile) {
+function sendToCheckIDService($uploadedImage, $hexFile, $uploadUrl='http://127.0.0.1:8000/compare_binary/') {
     // Validate input files
     if (!$uploadedImage || !$hexFile) {
         return [
@@ -16,9 +16,6 @@ function sendToCheckIDService($uploadedImage, $hexFile) {
             'error' => 'Image upload error'
         ];
     }
-
-    // URL for CheckID service
-    $uploadUrl = 'http://192.168.20.11:8000/compare_binary/';
 
     // Prepare cURL request
     $curl = curl_init();

@@ -2,17 +2,9 @@
 
 // URL 
 $main_api_url = 'http://localhost:82/index.php'; 
-
+require_once '../views/template.php';
 ?>
-<!DOCTYPE html>
-<html lang="es">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Registro Biométrico</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-</head>
-<body class="bg-gray-100 flex flex-col items-center justify-center min-h-screen p-4">
+<div class="bg-gray-100 flex flex-col items-center justify-center min-h-screen p-4">
     <h1 class="text-2xl font-bold text-gray-800 mb-4">Registro Biométrico</h1>
 
     <input type="text" id="cedula" placeholder="Ingrese su cédula" maxlength="10" pattern="\d{10}" required
@@ -154,5 +146,5 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 </script>
 
-</body>
+</div>
 </html>
