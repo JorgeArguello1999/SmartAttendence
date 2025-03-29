@@ -1,5 +1,7 @@
 # SmartAttendance 
 
+![Logo](logo.jpeg)
+
 En este proyecto la idea es que uno pueda enviar una imagen y esta sea verificada en una base de datos para ver si es la misma persona.
 
 ## Diagrama de uso
