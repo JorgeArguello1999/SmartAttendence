@@ -20,5 +20,11 @@ services:
       MYSQL_ROOT_PASSWORD: elliot
     restart: unless-stopped
   
+  checkid:
+    image: jorgearguello/checkid:2.1.0-compumax
+    ports:
+      - "5050:8000"
+    restart: unless-stopped
+  
 volumes:
   mysql_data: {}

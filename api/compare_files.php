@@ -1,6 +1,6 @@
 <?php
 
-function sendToCheckIDService($uploadedImage, $hexFile, $uploadUrl='http://127.0.0.1:8000/compare_binary/') {
+function sendToCheckIDService($uploadedImage, $hexFile, $uploadUrl='http://127.0.0.1:5050/compare_binary/') {
     // Validate input files
     if (!$uploadedImage || !$hexFile) {
         return [
