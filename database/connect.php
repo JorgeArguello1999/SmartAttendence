@@ -2,7 +2,6 @@
 
 class database {
     public $conn;
-    public $ruta;
 
     public function __construct() {
         // Init the connection
